@@ -102,6 +102,12 @@ void Shader::SetBoolUniform(const char* name, bool value)
     glUniform1f(loc, value);
 }
 
+void Shader::SetTextureUniform(const char* name, std::string& fileName)
+{
+    Texture* tex = new Texture();
+    tex->Load(fileName);
+}
+
 
 
 //シェーダーコンパイル関数

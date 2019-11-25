@@ -32,6 +32,9 @@ public:
     void RemovePlane(class PlaneActor* plane);
     void RemoveWall(class WallActor* wall);
     
+    bool GetStartFlag() {return mStartFlag; }
+    void SetStartflag(bool i) { mStartFlag = i; }
+    
     std::vector<class PlaneActor*>& GetPlanes() { return  mPlanes; }
     std::vector<class WallActor*>& GetWalls() {return mWalls;}
 
@@ -61,5 +64,5 @@ private:
     std::vector<class WallActor*> mWalls;
     
     //カウント用変数
-    float mTimeCount;
+    bool mStartFlag;
 };

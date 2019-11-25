@@ -69,7 +69,7 @@ private:
 	bool LoadShaders();
 	void CreateSpriteVerts();
 	void SetBasicLightUniforms(class Shader* shader);
-    void SetPhoneLightUniforms(class Shader* shader);
+    void SetPhongLightUniforms(class Shader* shader);
     void SetToonUniforms(class Shader* shader);
 
 	// Map of textures loaded
@@ -94,6 +94,8 @@ private:
 
 	// Meshシェーダー
 	class Shader* mMeshShader;
+    class Shader* mToonShader;
+    class Shader* mPhongShader;
     
 
 	// View/projection for 3D shaders

@@ -38,6 +38,7 @@ public:
     //　ブール変数のセット
     void SetBoolUniform(const char* name, bool value);
     //　テクスチャ変数のセット
+    void SetTextureUniform(const char* name, std::string& fileName);
 private:
 	// シェーダーをコンパイルする
 	bool CompileShader(const std::string& fileName,

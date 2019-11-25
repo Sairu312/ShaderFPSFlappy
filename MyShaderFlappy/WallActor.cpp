@@ -19,11 +19,12 @@ WallActor::WallActor(Game* game)
     :Actor(game)
 ,lifeSpan(10.0f)
 {
-    SetScale(10.0f);
+    SetScale(0.5f);
     mMoveComp = new MoveComponent(this);
     MeshComponent* mc = new MeshComponent(this);
-    Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Cube.gpmesh");
+    Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Sphere.gpmesh");
     mc->SetMesh(mesh);
+    mc->SetGroup(2);
     
     //コリジョンボックスの追加
     mBox = new BoxComponent(this);
@@ -31,6 +32,7 @@ WallActor::WallActor(Game* game)
     
     game->AddWall(this);
 }
+
 WallActor::~WallActor()
 {
     GetGame()->RemoveWall(this);

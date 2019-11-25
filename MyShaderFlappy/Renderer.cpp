@@ -21,11 +21,14 @@
 #include "SpriteComponent.h"
 #include "MeshComponent.h"
 #include <GL/glew.h>
+#include "Game.h"
 
 Renderer::Renderer(Game* game)
 	:mGame(game)
 	,mSpriteShader(nullptr)
 	,mMeshShader(nullptr)
+    ,mToonShader(nullptr)
+    ,mPhongShader(nullptr)
     ,ShaderFlag(0)
 {
 }
@@ -101,6 +104,10 @@ void Renderer::Shutdown()
 	delete mSpriteShader;
 	mMeshShader->Unload();
 	delete mMeshShader;
+    mPhongShader->Unload();
+    delete mPhongShader;
+    mToonShader->Unload();
+    delete mToonShader;
 	SDL_GL_DeleteContext(mContext);
 	SDL_DestroyWindow(mWindow);
 }
@@ -138,18 +145,41 @@ void Renderer::Draw()
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	// Set the mesh shader active
-	mMeshShader->SetActive();
-	// Update view-projection matrix
-	mMeshShader->SetMatrixUniform("uViewProj", mView * mProjection);
-	// Update lighting uniforms
-    if(ShaderFlag == 0)
-	SetBasicLightUniforms(mMeshShader);
-    else SetPhoneLightUniforms(mMeshShader);
-	for (auto mc : mMeshComps)
-	{
-		mc->Draw(mMeshShader);
-	}
-
+    for(auto mc : mMeshComps)
+    {
+        if(mc->GetGroup() == 2)
+        {
+            if(ShaderFlag == 0)
+            {
+                mMeshShader->SetActive();
+                // Update view-projection matrix
+                mMeshShader->SetMatrixUniform("uViewProj",
+                                              mView * mProjection);
+                // Update lighting uniforms
+                SetBasicLightUniforms(mMeshShader);
+                mc->Draw(mMeshShader);
+            }else{
+                mPhongShader->SetActive();
+                // Update view-projection matrix
+                mPhongShader->SetMatrixUniform("uViewProj",
+                                               mView * mProjection);
+                // Update lighting uniforms
+                SetPhongLightUniforms(mPhongShader);
+                mc->Draw(mPhongShader);
+            }
+        }else{
+            mMeshShader->SetActive();
+            // Update view-projection matrix
+            mMeshShader->SetMatrixUniform("uViewProj",
+                                          mView * mProjection);
+            // Update lighting uniforms
+            SetBasicLightUniforms(mMeshShader);
+            mc->Draw(mMeshShader);
+        }
+    }
+    
+      
+      
 	// Draw all sprite components
 	// Disable depth buffering
 	glDisable(GL_DEPTH_TEST);
@@ -161,10 +191,13 @@ void Renderer::Draw()
 	// シェーダーと頂点配列の有効化
 	mSpriteShader->SetActive();
 	mSpriteVerts->SetActive();
-	for (auto sprite : mSprites)
-	{
-		sprite->Draw(mSpriteShader);
-	}
+    if(!mGame->GetStartFlag())
+    {
+        for (auto sprite : mSprites)
+        {
+            sprite->Draw(mSpriteShader);
+        }
+    }
 
 	// バッファーの入れ替え
 	SDL_GL_SwapWindow(mWindow);
@@ -272,15 +305,30 @@ bool Renderer::LoadShaders()
 
 	// メッシュ用シェーダーの生成
 	mMeshShader = new Shader();
-	if (!mMeshShader->Load("Shaders/Phong.vert", "Shaders/Phong.frag"))
+	if (!mMeshShader->Load("Shaders/BasicMesh.vert", "Shaders/BasicMesh.frag"))
 	{
 		return false;
 	}
-    
-    
-    
-
 	mMeshShader->SetActive();
+    
+    mPhongShader = new Shader();
+    if(!mPhongShader->Load("Shaders/Phong.vert", "Shaders/Phong.frag"))
+    {
+        return false;
+    }
+    mPhongShader->SetActive();
+    
+    
+    mToonShader = new Shader();
+    if(!mToonShader->Load("Shaders/Toon.vert", "Shaders/Toon.frag"))
+    {
+        return false;
+    }
+    mToonShader->SetActive();
+     
+    
+    
+    
 	// ビューと射影行列を設定
 	mView = Matrix4::CreateLookAt(
             Vector3::Zero,
@@ -317,6 +365,7 @@ void Renderer::SetBasicLightUniforms(Shader* shader)
 	Matrix4 invView = mView;
 	invView.Invert();
 	shader->SetVectorUniform("uCameraPos", invView.GetTranslation());
+    /*
 	// 環境光
 	shader->SetVectorUniform("uAmbientLight", mAmbientLight);
 	// 平行光構造体
@@ -326,10 +375,11 @@ void Renderer::SetBasicLightUniforms(Shader* shader)
                              mDirLight0.mDiffuseColor);
 	shader->SetVectorUniform("uDirLight.mSpecColor",
                              mDirLight0.mSpecColor);
+     */
 }
 
 //Phongシェーダー用ライティング
-void Renderer::SetPhoneLightUniforms(Shader* shader)
+void Renderer::SetPhongLightUniforms(Shader* shader)
 {
     // Camera position is from inverted view
     Matrix4 invView = mView;
@@ -339,14 +389,27 @@ void Renderer::SetPhoneLightUniforms(Shader* shader)
     shader->SetVectorUniform("uAmbientLight", mAmbientLight);
     // 平行光構造体
     shader->SetVectorUniform("uDirLight.mDirection",
-                             mDirLight1.mDirection);
+                             mDirLight0.mDirection);
     shader->SetVectorUniform("uDirLight.mDiffuseColor",
-                             mDirLight1.mDiffuseColor);
+                             mDirLight0.mDiffuseColor);
     shader->SetVectorUniform("uDirLight.mSpecColor",
-                             mDirLight1.mSpecColor);
+                             mDirLight0.mSpecColor);
 }
 
 void Renderer::SetToonUniforms(Shader* shader)
 {
+    Matrix4 invView = mView;
+    invView.Invert();
+    shader->SetVectorUniform("uCameraPos", invView.GetTranslation());
+    // 環境光
+    shader->SetVectorUniform("uAmbientLight", mAmbientLight);
+    // 平行光構造体
+    shader->SetVectorUniform("uDirLight.mDirection",
+                             mDirLight0.mDirection);
+    shader->SetVectorUniform("uDirLight.mDiffuseColor",
+                             mDirLight0.mDiffuseColor);
+    shader->SetVectorUniform("uDirLight.mSpecColor",
+                             mDirLight0.mSpecColor);
+    
     
 }

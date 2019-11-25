@@ -35,6 +35,8 @@ public:
     const AABB& GetBox() const {return mBox; }
 	// オブジェクト空間での境界球の半径の取得
 	float GetSpecPower() const { return mSpecPower; }
+    
+   
 private:
     //AABB用変数
     AABB mBox;

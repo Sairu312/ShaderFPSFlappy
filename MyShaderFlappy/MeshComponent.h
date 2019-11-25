@@ -26,7 +26,11 @@ public:
 	// mesh/textureの設定
 	virtual void SetMesh(class Mesh* mesh) { mMesh = mesh; }
 	void SetTextureIndex(size_t index) { mTextureIndex = index; }
+    int GetGroup() const {return mGroup;}
+       void SetGroup(int i){ mGroup = i;}
 protected:
 	class Mesh* mMesh;
 	size_t mTextureIndex;
+    //区別用変数
+    int mGroup;
 };

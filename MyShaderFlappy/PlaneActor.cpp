@@ -28,6 +28,7 @@ PlaneActor::PlaneActor(Game* game)
 	MeshComponent* mc = new MeshComponent(this);
     Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Plane.gpmesh");
 	mc->SetMesh(mesh);
+    mc->SetGroup(1);
     
     //コリジョンボックスの追加
     mBox = new BoxComponent(this);

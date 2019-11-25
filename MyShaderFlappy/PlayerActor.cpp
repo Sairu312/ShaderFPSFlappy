@@ -7,6 +7,7 @@
 #include "SDL/SDL_scancode.h"
 #include "BoxComponent.h"
 #include "WallActor.h"
+#include "PlaneActor.h"
 #include "Mesh.h"
 #include <stdio.h>
 
@@ -14,7 +15,7 @@
 //アクターの生成
 PlayerActor::PlayerActor(Game* game)
     :Actor(game)
-,mJumpPower(100.0f)
+,mJumpPower(60.0f)
 ,mCount(0)
 ,mLast(false)
 ,mNow(false)
@@ -24,8 +25,7 @@ PlayerActor::PlayerActor(Game* game)
     MeshComponent* mc = new MeshComponent(this);
     Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Cube.gpmesh");
     mc->SetMesh(mesh);
-    
-    
+
     //boxComponentの追加
     mBoxComp = new BoxComponent(this);
     mBoxComp->SetObjectBox(mesh->GetBox());
@@ -39,11 +39,17 @@ void PlayerActor::UpdateActor(float deltaTime)
     FixCollisions();
     
     mTimeCount += deltaTime;
-    mGravity = -40.0f * mTimeCount;
+    mGravity = -5.0f * mTimeCount;
     mMoveSpeed += mGravity;
+    if(!GetGame()->GetStartFlag())mMoveSpeed = 0.0f;
+    if(mMoveSpeed < -0.1f && GetPosition().z < -80.0f)
+    {
+        mMoveSpeed = 0.0f;
+        //SwapShaderFlag();
+        SetPosition(Vector3(200.0f,-75.0f,0.0f));
+        GetGame()->SetStartflag(false);
+    }
     mMoveComp->SetUpperSpeed(mMoveSpeed);
-    
-    
     
     //カメラの位置
     Vector3 cameraPos = GetPosition();
@@ -54,9 +60,6 @@ void PlayerActor::UpdateActor(float deltaTime)
 
     Matrix4 view = Matrix4::CreateLookAt(cameraPos, target, up);
     GetGame()->GetRenderer()->SetViewMatrix(view);
-     
-     
-    
 }
 
 void PlayerActor::ActorInput(const uint8_t* keys)
@@ -76,32 +79,18 @@ void PlayerActor::FixCollisions()
     //自分のワールド変換を再計算する必要がある
     ComputeWorldTransform();
     
-    const AABB& playerBox =  mBoxComp->GetWorldBox();
-    //Vector3 pos = GetPosition();
+    const AABB& playerBox = mBoxComp->GetWorldBox();
     
     auto& walls = GetGame()->GetWalls();
     
-    for(auto pa : walls)
+    for(auto wa : walls)
     {
         //このWallActorと衝突するか？
-        const AABB& wallBox = pa->GetBox()->GetWorldBox();
+        const AABB& wallBox = wa->GetBox()->GetWorldBox();
         if(Intersect(playerBox, wallBox))
         {
             if(!mLast){
-                mCount+=1;
-                printf("bump!!%d\n",mCount);
-            
-                int i = GetGame()->GetRenderer()->GetShaderFlag();
-                if(i==0)
-                {
-                i=1;
-                printf("1\n");
-                }
-                else {
-                    i = 0;
-                    printf("0\n");
-                }
-                GetGame()->GetRenderer()->SetShaderFlag(i);
+                SwapShaderFlag();
             }
             mNow = true;
         }
@@ -109,4 +98,17 @@ void PlayerActor::FixCollisions()
     if(mNow)mLast = true;
     else mLast = false;
     mNow = false;
+}
+
+void PlayerActor::SwapShaderFlag()
+{
+    int i = GetGame()->GetRenderer()->GetShaderFlag();
+    if(i==0)
+    {
+        i = 1;
+    }
+    else {
+        i = 0;
+    }
+    GetGame()->GetRenderer()->SetShaderFlag(i);
 }

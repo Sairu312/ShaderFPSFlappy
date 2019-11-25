@@ -9,6 +9,7 @@ public:
 
     void UpdateActor(float deltaTime) override;
     void ActorInput(const uint8_t* keys) override;
+    void SwapShaderFlag();
     
     void FixCollisions();
 private:

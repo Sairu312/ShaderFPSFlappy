@@ -25,13 +25,14 @@
 #include "PlayerActor.h"
 #include <stdio.h>
 #include "PhysWorld.h"
+#include "WallCreateActor.h"
 
 Game::Game()
 :mRenderer(nullptr)
 ,mIsRunning(true)
 ,mUpdatingActors(false)
-,mTimeCount(0.0f)
 ,mPhysWorld(nullptr)
+,mStartFlag(false)
 {
 	
 }
@@ -146,23 +147,6 @@ void Game::UpdateGame()
 		deltaTime = 0.05f;
 	}
 	mTicksCount = SDL_GetTicks();
-    mTimeCount += deltaTime;
-    
-    if(mTimeCount > 2.0f)
-    {
-        float i = rand()/50000000;
-        WallActor* a = new WallActor(this);
-        //MeshComponent* mc = new MeshComponent(a);
-        a->SetPosition(Vector3(0.0f, -75.0f, i));
-        //mc = new MeshComponent(a);
-        //mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
-        //AddActor(a);
-        a = new WallActor(this);
-        a->SetPosition(Vector3(0.0f, -75.0f, i + 50.0f));
-        mTimeCount = 0.0f;
-    }
-    
-    
     
 
 	// すべてのアクターを更新する
@@ -217,9 +201,12 @@ void Game::LoadData()
     */
 	Quaternion q(Vector3::UnitY, -Math::PiOver2);
     
+    
     a = new PlayerActor(this);
     a->SetPosition(Vector3(200.0f,-75.0f,0.0f));
     a->SetRotation(Quaternion(Vector3::UnitZ,Math::Pi));
+    
+    a = new WallCreateActor(this);
     
     
     /*
@@ -228,8 +215,8 @@ void Game::LoadData()
     //MeshComponentの宣言時にAddMeshCompにコンポーネントが入れられるため
     //mcを再び初期化しても問題がない
      */
-	MeshComponent* mc = new MeshComponent(a);
-    mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
+//	MeshComponent* mc = new MeshComponent(a);
+//    mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
     /*
 	mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
 
@@ -286,20 +273,32 @@ void Game::LoadData()
 	mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
 	DirectionalLight& dir = mRenderer->GetDirectionalLight0();
 	dir.mDirection = Vector3(0.0f, -0.707f, -0.707f);
-	dir.mDiffuseColor = Vector3(0.78f, 0.88f, 1.0f);
+	dir.mDiffuseColor = Vector3(0.8f, 0.8f, 0.8f);
 	dir.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
     
-    mRenderer->SetAmbientLight(Vector3(0.2f, -0.2f, 0.2f));
+    //mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
     DirectionalLight& dir1 = mRenderer->GetDirectionalLight1();
-    dir1.mDirection = Vector3(0.0f, 0.0, 0.0f);
-    dir1.mDiffuseColor = Vector3(0.0f, 0.0f, 0.0f);
-    dir1.mSpecColor = Vector3(0.0f, 0.0f, 0.0f);
+    dir1.mDirection = Vector3(0.0f, -0.707f, -0.707f);
+    dir1.mDiffuseColor = Vector3(0.0f, 1.0f, 0.0f);
+    dir1.mSpecColor = Vector3(0.5f, 1.0f, 0.5f);
 
-    mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
+    //mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
     DirectionalLight& dir2 = mRenderer->GetDirectionalLight2();
     dir2.mDirection = Vector3(0.0f, -0.707f, -0.707f);
     dir2.mDiffuseColor = Vector3(0.78f, 0.88f, 1.0f);
     dir2.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
+    
+    //mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
+    DirectionalLight& dir3 = mRenderer->GetDirectionalLight3();
+    dir3.mDirection = Vector3(0.0f, -0.707f, -0.707f);
+    dir3.mDiffuseColor = Vector3(0.78f, 0.88f, 1.0f);
+    dir3.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
+    
+    //mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
+    DirectionalLight& dir4 = mRenderer->GetDirectionalLight4();
+    dir4.mDirection = Vector3(0.0f, -0.707f, -0.707f);
+    dir4.mDiffuseColor = Vector3(0.78f, 0.88f, 1.0f);
+    dir4.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
 
     
 	// カメラアクター
@@ -317,6 +316,10 @@ void Game::LoadData()
 	sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/Radar.png"));
  */
+    a = new Actor(this);
+    a->SetPosition(Vector3(60.0f, 0.0f, 0.0f));
+    SpriteComponent* sc = new SpriteComponent(a);
+    sc->SetTexture(mRenderer->GetTexture("Assets/Title.png"));
 }
 
 void Game::Shutdown()

@@ -30,6 +30,7 @@
 		F4D034FD237D3ABF002876B6 /* BoxComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4D034FB237D3ABF002876B6 /* BoxComponent.cpp */; };
 		F4D03500237D550C002876B6 /* Collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4D034FE237D550C002876B6 /* Collision.cpp */; };
 		F4D03503237D5BC5002876B6 /* PhysWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4D03501237D5BC5002876B6 /* PhysWorld.cpp */; };
+		F4D0350B238C0695002876B6 /* WallCreateActor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4D03509238C0694002876B6 /* WallCreateActor.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +79,8 @@
 		F4D034FF237D550C002876B6 /* Collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collision.h; sourceTree = "<group>"; };
 		F4D03501237D5BC5002876B6 /* PhysWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhysWorld.cpp; sourceTree = "<group>"; };
 		F4D03502237D5BC5002876B6 /* PhysWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhysWorld.h; sourceTree = "<group>"; };
+		F4D03509238C0694002876B6 /* WallCreateActor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WallCreateActor.cpp; sourceTree = "<group>"; };
+		F4D0350A238C0694002876B6 /* WallCreateActor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallCreateActor.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +112,8 @@
 				F4737856237998C300BFE7A2 /* WallActor.h */,
 				F4737859237ABAA200BFE7A2 /* PlayerActor.cpp */,
 				F473785A237ABAA200BFE7A2 /* PlayerActor.h */,
+				F4D03509238C0694002876B6 /* WallCreateActor.cpp */,
+				F4D0350A238C0694002876B6 /* WallCreateActor.h */,
 				9223C4721F009428009A94D7 /* Math.cpp */,
 				9223C4731F009428009A94D7 /* Math.h */,
 				92CF0D6A1F3BBBE50086A0F3 /* Mesh.cpp */,
@@ -243,6 +248,7 @@
 				92CF0D741F3BBBE50086A0F3 /* MeshComponent.cpp in Sources */,
 				F4D03503237D5BC5002876B6 /* PhysWorld.cpp in Sources */,
 				92CF0D731F3BBBE50086A0F3 /* Mesh.cpp in Sources */,
+				F4D0350B238C0695002876B6 /* WallCreateActor.cpp in Sources */,
 				9223C4951F0CA766009A94D7 /* CircleComponent.cpp in Sources */,
 				9223C47C1F009428009A94D7 /* Component.cpp in Sources */,
 				9206FDC61F140707005078A2 /* Texture.cpp in Sources */,

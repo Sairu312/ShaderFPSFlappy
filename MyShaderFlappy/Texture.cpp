@@ -39,7 +39,7 @@ bool Texture::Load(const std::string& fileName)
 	
 	if (image == nullptr)
 	{
-		SDL_Log("SOIL failed to load image %s: %s", fileName.c_str(), SOIL_last_result());
+		SDL_Log("SOILは画像%sの取得に失敗しました: %s", fileName.c_str(), SOIL_last_result());
 		return false;
 	}
 	

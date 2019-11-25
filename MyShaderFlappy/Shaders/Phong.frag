@@ -1,62 +1,60 @@
 // ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
+// Phongシェーダ用fフラグメントシェーダー
+// 環境光，拡散反射，鏡面反射の合成で出来上がる
+//
+// Create by Satoru Inukai(ゲームプログラミングC++を参考)
 // ----------------------------------------------------------------
 
-// Request GLSL 3.3
+// GLSL 3.3
 #version 330
 
-// Inputs from vertex shader
-// Tex coord
+// 頂点シェーダーから
 in vec2 fragTexCoord;
-// Normal (in world space)
+// 法線
 in vec3 fragNormal;
-// Position (in world space)
+// 座標
 in vec3 fragWorldPos;
 
-// This corresponds to the output color to the color buffer
+// 出力の色
 out vec4 outColor;
 
-// This is used for the texture sampling
+// テクスチャ
 uniform sampler2D uTexture;
 
-// Create a struct for directional light
+// 平行光源用構造体
 struct DirectionalLight
 {
-	// Direction of light
+	// 光の方向
 	vec3 mDirection;
-	// Diffuse color
+	// 拡散反射色
 	vec3 mDiffuseColor;
-	// Specular color
+	// 鏡面反射色
 	vec3 mSpecColor;
 };
 
-// Uniforms for lighting
-// Camera position (in world space)
+// ライティングのuniform
+// カメラポジション
 uniform vec3 uCameraPos;
-// Specular power for this surface
+// スペキュラー
 uniform float uSpecPower;
-// Ambient light level
+// 環境光成分
 uniform vec3 uAmbientLight;
 
-// Directional Light
+// 平行光源
 uniform DirectionalLight uDirLight;
 
 void main()
 {
-	// Surface normal
+	// 表面の法線
 	vec3 N = normalize(fragNormal);
-	// Vector from surface to light
+	// 光源ベクトル
 	vec3 L = normalize(-uDirLight.mDirection);
-	// Vector from surface to camera
+	// 視線ベクトル
 	vec3 V = normalize(uCameraPos - fragWorldPos);
-	// Reflection of -L about N
+	// 法線Nで反射した光源ベクトル
 	vec3 R = normalize(reflect(-L, N));
 
-	// Compute phong reflection
+	// フォンシェーディングを計算
 	vec3 Phong = uAmbientLight;
 	float NdotL = dot(N, L);
 	if (NdotL > 0)
@@ -66,6 +64,6 @@ void main()
 		Phong += Diffuse + Specular;
 	}
 
-	// Final color is texture color times phong light (alpha = 1)
+	// 最終的な色はテクスチャの色xフォンの光(alpha = 1)
     outColor = texture(uTexture, fragTexCoord) * vec4(Phong, 1.0f);
 }
